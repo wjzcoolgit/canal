@@ -17,6 +17,7 @@ import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
 public class SpringCanalInstanceGenerator implements CanalInstanceGenerator {
 
     private static final Logger logger      = LoggerFactory.getLogger(SpringCanalInstanceGenerator.class);
+    // 就是在canal.properties中通过canal.instance.global.spring.xml配置项指定了spring配置文件路径
     private String              springXml;
     private String              defaultName = "instance";
     private BeanFactory         beanFactory;

@@ -12,6 +12,7 @@ public interface CanalStoreScavenge {
 
     /**
      * 清理position之前的数据
+     * 在执行ack操作时会被调用
      */
     void cleanUntil(Position position) throws CanalStoreException;
 

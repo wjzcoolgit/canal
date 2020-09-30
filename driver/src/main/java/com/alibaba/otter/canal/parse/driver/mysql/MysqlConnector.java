@@ -26,6 +26,8 @@ import com.alibaba.otter.canal.parse.driver.mysql.utils.PacketManager;
 
 /**
  * 基于mysql socket协议的链接实现
+ * 表示一个数据库连接，作用类似于java.sql.Connection
+ * 一个MysqlConnector实例底层只能维护一个数据库连接
  * 
  * @author jianghang 2013-2-18 下午09:22:30
  * @version 1.0.1
@@ -33,15 +35,24 @@ import com.alibaba.otter.canal.parse.driver.mysql.utils.PacketManager;
 public class MysqlConnector {
 
     private static final Logger logger            = LoggerFactory.getLogger(MysqlConnector.class);
+    // 设置hostname port
     private InetSocketAddress   address;
+    // 设置用户名
     private String              username;
+    // 设置密码
     private String              password;
 
+    // 设置链接到的字符串 33表示UTF-8
     private byte                charsetNumber     = 33;
+    // 设置默认连接到的数据库
     private String              defaultSchema;
+    // 设置socket超时时间，默认30秒，也就是发送一个请求给mysql时，如果30S没有响应，则会抛出SocketTimeoutException
     private int                 soTimeout         = 30 * 1000;
+    // 设置连接超时时间，默认5秒
     private int                 connTimeout       = 5 * 1000;
+    // 设置接收缓冲区大小，默认16K
     private int                 receiveBufferSize = 16 * 1024;
+    // 设置发送缓冲区大小，默认16K
     private int                 sendBufferSize    = 16 * 1024;
 
     private SocketChannel       channel;
@@ -87,6 +98,10 @@ public class MysqlConnector {
         }
     }
 
+    /**
+     * 重新连接
+     * @throws IOException
+     */
     public void reconnect() throws IOException {
         disconnect();
         connect();
@@ -131,6 +146,10 @@ public class MysqlConnector {
         return this.channel != null && this.channel.isConnected();
     }
 
+    /**
+     *  如果希望创建多个连接，可以fork出一个新的MysqlConnector实例，再调用这个新的MysqlConnector实例的connect方法建立连接
+     * @return
+     */
     public MysqlConnector fork() {
         MysqlConnector connector = new MysqlConnector();
         connector.setCharsetNumber(getCharsetNumber());
@@ -155,6 +174,11 @@ public class MysqlConnector {
         PacketManager.writePkg(channel, quitHeader.toBytes(), cmdBody);
     }
 
+    /**
+     * 通过IP端口建立连接后，握手传入其他连接数据库所需参数
+     * @param channel
+     * @throws IOException
+     */
     private void negotiate(SocketChannel channel) throws IOException {
         // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol
         HeaderPacket header = PacketManager.readHeader(channel, 4, timeout);

@@ -9,11 +9,17 @@ import com.alibaba.otter.canal.store.model.Events;
 
 /**
  * canel数据存储接口
- * 
+ *
  * @author jianghang 2012-6-14 下午08:44:52
  * @version 1.0.0
  */
 public interface CanalEventStore<T> extends CanalLifeCycle, CanalStoreScavenge {
+
+    /**
+     * 不带timeout超时参数的put方法，会一直进行阻塞，直到有足够的空间可以放入。
+     * 带timeout参数超时参数的put方法，如果超过指定时间还未put成功，会抛出InterruptedException。
+     * tryPut方法每次只是尝试放入数据，立即返回true或者false，不会阻塞。
+     */
 
     /**
      * 添加一组数据对象，阻塞等待其操作完成 (比如一次性添加一个事务数据)

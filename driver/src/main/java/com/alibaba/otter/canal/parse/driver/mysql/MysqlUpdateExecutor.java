@@ -12,6 +12,7 @@ import com.alibaba.otter.canal.parse.driver.mysql.utils.PacketManager;
 
 /**
  * 默认输出的数据编码为UTF-8，如有需要请正确转码
+ * 更新执行器，作用类似于PrepareStatement.executeUpdate()
  * 
  * @author jianghang 2013-9-4 上午11:51:11
  * @since 1.0.0

@@ -81,6 +81,11 @@ public class SpringInstanceConfigMonitor extends AbstractCanalLifeCycle implemen
         lastFiles.clear();
     }
 
+    /**
+     * 当需要对一个destination进行监听时，调用register方法
+     * @param destination
+     * @param action
+     */
     public void register(String destination, InstanceAction action) {
         if (action != null) {
             actions.put(destination, action);
@@ -89,6 +94,10 @@ public class SpringInstanceConfigMonitor extends AbstractCanalLifeCycle implemen
         }
     }
 
+    /**
+     * 当取消对一个destination监听时，调用unregister方法
+     * @param destination
+     */
     public void unregister(String destination) {
         actions.remove(destination);
     }

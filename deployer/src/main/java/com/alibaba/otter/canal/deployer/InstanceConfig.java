@@ -12,10 +12,20 @@ import com.alibaba.otter.canal.common.utils.CanalToStringStyle;
  */
 public class InstanceConfig {
 
+    /**
+     * 维护了一个globalConfig字段，其类型也是InstanceConfig
+     * 而其相关get方法在执行时，会按照以下逻辑进行判断：
+     * 如果没有自身没有这个配置，则返回全局配置；如果有，则返回自身的配置。
+     * 通过这种方式实现对全局配置的覆盖。
+     */
     private InstanceConfig globalConfig;
+    // 确定canal instance配置加载方式，取值有manager|spring两种方式
     private InstanceMode   mode;
+    // 确定canal instance是否延迟初始化
     private Boolean        lazy;
+    // 配置中心地址。如果canal.instance.global.mode=manager，需要提供此配置项
     private String         managerAddress;
+    // spring配置文件路径。如果canal.instance.global.mode=spring，需要提供此配置项
     private String         springXml;
 
     public InstanceConfig(){

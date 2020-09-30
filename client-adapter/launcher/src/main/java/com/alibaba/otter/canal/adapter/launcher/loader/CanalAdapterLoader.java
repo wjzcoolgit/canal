@@ -49,7 +49,8 @@ public class CanalAdapterLoader {
     /**
      * 初始化canal-client
      */
-    public void init() {
+    public void init
+    () {
         loader = ExtensionLoader.getExtensionLoader(OuterAdapter.class);
 
         String canalServerHost = this.canalClientConfig.getCanalServerHost();

@@ -86,8 +86,10 @@ public class CanalEventUtils {
      */
     public static boolean checkPosition(Event event, LogPosition logPosition) {
         EntryPosition position = logPosition.getPostion();
+        // 匹配时间
         boolean result = position.getTimestamp().equals(event.getExecuteTime());
 
+        // 判断是否需要根据：binlog文件+position进行比较
         boolean exactely = (StringUtils.isBlank(position.getJournalName()) && position.getPosition() == null);
         if (!exactely) {// 精确匹配
             result &= position.getPosition().equals(event.getPosition());

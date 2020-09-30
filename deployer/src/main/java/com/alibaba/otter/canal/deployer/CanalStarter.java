@@ -1,11 +1,5 @@
 package com.alibaba.otter.canal.deployer;
 
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.otter.canal.admin.netty.CanalAdminWithNetty;
 import com.alibaba.otter.canal.common.MQProperties;
 import com.alibaba.otter.canal.deployer.admin.CanalAdminController;
@@ -13,6 +7,11 @@ import com.alibaba.otter.canal.kafka.CanalKafkaProducer;
 import com.alibaba.otter.canal.rocketmq.CanalRocketMQProducer;
 import com.alibaba.otter.canal.server.CanalMQStarter;
 import com.alibaba.otter.canal.spi.CanalMQProducer;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 /**
  * Canal server 启动类
@@ -75,6 +74,7 @@ public class CanalStarter {
 
         logger.info("## start the canal server.");
         controller = new CanalController(properties);
+        // 通过CanalController.start()方法启动Canal_server
         controller.start();
         logger.info("## the canal server is running now ......");
         shutdownThread = new Thread() {
@@ -92,6 +92,7 @@ public class CanalStarter {
             }
 
         };
+        // JVM钩子
         Runtime.getRuntime().addShutdownHook(shutdownThread);
 
         if (canalMQProducer != null) {

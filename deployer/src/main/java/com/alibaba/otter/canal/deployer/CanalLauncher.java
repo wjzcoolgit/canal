@@ -1,21 +1,20 @@
 package com.alibaba.otter.canal.deployer;
 
+import com.alibaba.otter.canal.common.utils.AddressUtils;
+import com.alibaba.otter.canal.common.utils.NamedThreadFactory;
+import com.alibaba.otter.canal.instance.manager.plain.PlainCanal;
+import com.alibaba.otter.canal.instance.manager.plain.PlainCanalConfigClient;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.otter.canal.common.utils.AddressUtils;
-import com.alibaba.otter.canal.common.utils.NamedThreadFactory;
-import com.alibaba.otter.canal.instance.manager.plain.PlainCanal;
-import com.alibaba.otter.canal.instance.manager.plain.PlainCanalConfigClient;
 
 /**
  * canal独立版本启动的入口类
@@ -36,6 +35,9 @@ public class CanalLauncher {
             logger.info("## set default uncaught exception handler");
             setGlobalUncaughtExceptionHandler();
 
+            /**
+             * 读取canal.properties文件中的配置
+             */
             logger.info("## load canal configurations");
             String conf = System.getProperty("canal.conf", "classpath:canal.properties");
             Properties properties = new Properties();
@@ -46,6 +48,9 @@ public class CanalLauncher {
                 properties.load(new FileInputStream(conf));
             }
 
+            /**
+             *  利用读取的配置文件构造一个CanalController实例，将所有的启动操作都委派给CanalController进行处理
+             */
             final CanalStarter canalStater = new CanalStarter(properties);
             String managerAddress = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_MANAGER);
             if (StringUtils.isNotEmpty(managerAddress)) {
@@ -95,6 +100,11 @@ public class CanalLauncher {
                                     // merge local
                                     managerProperties.putAll(properties);
                                     canalStater.setProperties(managerProperties);
+                                    /**
+                                     * 关闭canal，通过添加JVM的钩子，JVM停止前会回调run方法，其内部调用controller.stop()方法进行停止
+                                     * Runtime.getRuntime().addShutdownHook(new Thread() {..
+                                     * 钩子方法移到CanalStarter类中79行
+                                     */
                                     canalStater.start();
 
                                     lastCanalConfig = newCanalConfig;
